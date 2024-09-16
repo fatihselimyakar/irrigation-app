@@ -12,7 +12,7 @@ import { useSwipeable } from 'react-swipeable';
 import TimerPage from './pages/TimerPage';
 import ManualPage from './pages/ManualPage';
 import SettingsPage from './pages/SettingsPage';
-
+import TaskBar from './components/TaskBar'; // Import TaskBar component
 
 const options = [
   {
@@ -58,12 +58,11 @@ const PageTitle = ({ title }) => (
   </Typography>
 );
 
-
 function App() {
   return (
     <Router>
       <Routes>
-      <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<MainPage />} />
         <Route path="/timer" element={<TimerPage />} />
         <Route path="/manual" element={<ManualPage />} />
         <Route path="/settings" element={<SettingsPage />} />
@@ -130,9 +129,10 @@ function MainPage() {
         },
       }}
     >
-      
+      {/* TaskBar component, only visible when animation is not shown */}
+      {!showAnimation && <TaskBar />}
+
       {showAnimation ? (
-        
         <Box
           sx={{
             display: 'flex',
@@ -154,7 +154,6 @@ function MainPage() {
             style={{ width: '150px', height: '150px', animation: 'App-logo-spin 2s linear infinite' }}
           />
         </Box>
-        
       ) : (
         <Box
           {...handlers}
@@ -172,7 +171,7 @@ function MainPage() {
           }}
         >
           {/* Noktalar */}
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 12 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 12, mt: 12 }}>
             {options.map((option, index) => (
               <Box
                 key={option.id}
@@ -279,9 +278,9 @@ function MainPage() {
               },
             }}
           >
-             <Typography variant="h6"  sx={{
-                        fontFamily: "'Nunito', sans-serif",  // El yazısı fontu
-                    }}>Choose</Typography>
+            <Typography variant="h6" sx={{ fontFamily: "'Nunito', sans-serif" }}>
+              Choose
+            </Typography>
           </Button>
         </Box>
       )}
