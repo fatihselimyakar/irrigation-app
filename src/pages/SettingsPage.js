@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
-import { Container, Typography, Box, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Container, Typography, Box, Button, Select, MenuItem, CircularProgress } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Select, MenuItem } from '@mui/material';
 import BackButton from '../components/BackButton';
 
 const SettingsPage = () => {
-    const [selectedPercentage, setSelectedPercentage] = React.useState('');
-    const [valveState, setValveState] = React.useState('');
+    const [selectedPercentage, setSelectedPercentage] = useState('');
+    const [valveState, setValveState] = useState('');
+    const [loading, setLoading] = useState(true); // Loading state
 
     // Fetch state when the component mounts
     useEffect(() => {
@@ -23,6 +23,8 @@ const SettingsPage = () => {
                 }
             } catch (error) {
                 console.error('Error fetching settings state:', error);
+            } finally {
+                setLoading(false); // Make sure to set loading to false after fetching
             }
         };
         fetchState();
@@ -37,7 +39,6 @@ const SettingsPage = () => {
     };
 
     const handleSubmit = async () => {
-
         try {
             const response = await fetch('https://flask-backend-app-7pvn.onrender.com/settings_page/set_state', {
                 method: 'POST',
@@ -45,9 +46,9 @@ const SettingsPage = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  user_id: 1, // This would normally come from user authentication
-                  valve_opening_amount: selectedPercentage,
-                  default_open: valveState
+                    user_id: 1, // This would normally come from user authentication
+                    valve_opening_amount: selectedPercentage,
+                    default_open: valveState
                 }),
             });
 
@@ -60,6 +61,19 @@ const SettingsPage = () => {
             console.error('Error saving settings state:', error);
         }
     };
+
+    if (loading) {
+        return (
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh' 
+            }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -86,26 +100,26 @@ const SettingsPage = () => {
                         Select Valve Opening Amount
                     </Typography>
                     <Box sx={{ marginBottom: 2 }}>
-                      <Select
-                        sx={{ 
-                          maxWidth: '300px',
-                          width: '100%',
-                        }}
-                        value={selectedPercentage}
-                        onChange={handlePercentageChange}
-                        displayEmpty
-                        inputProps={{ 'aria-label': 'Select Percentage' }}
-                      >
-                        <MenuItem value="" disabled>Select Percentage</MenuItem>
-                        {[...Array(20).keys()].map(i => {
-                          const percentage = (i + 1) * 5;
-                          return (
-                            <MenuItem key={percentage} value={percentage}>
-                              {percentage}%
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
+                        <Select
+                            sx={{ 
+                                maxWidth: '300px',
+                                width: '100%',
+                            }}
+                            value={selectedPercentage}
+                            onChange={handlePercentageChange}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Select Percentage' }}
+                        >
+                            <MenuItem value="" disabled>Select Percentage</MenuItem>
+                            {[...Array(20).keys()].map(i => {
+                                const percentage = (i + 1) * 5;
+                                return (
+                                    <MenuItem key={percentage} value={percentage}>
+                                        {percentage}%
+                                    </MenuItem>
+                                );
+                            })}
+                        </Select>
                     </Box>
 
                     <Typography variant="h6" sx={{
@@ -115,20 +129,20 @@ const SettingsPage = () => {
                         Select Valve State
                     </Typography>
                     <Box sx={{ marginBottom: 2 }}>
-                      <Select
-                        sx={{ 
-                          maxWidth: '300px',
-                          width: '100%',
-                        }}
-                        value={valveState}
-                        onChange={handleValveStateChange}
-                        displayEmpty
-                        inputProps={{ 'aria-label': 'Select Valve State' }}
-                      >
-                        <MenuItem value="" disabled>Select Valve State</MenuItem>
-                        <MenuItem value="1">Normally Open</MenuItem>
-                        <MenuItem value="0">Normally Closed</MenuItem>
-                      </Select>
+                        <Select
+                            sx={{ 
+                                maxWidth: '300px',
+                                width: '100%',
+                            }}
+                            value={valveState}
+                            onChange={handleValveStateChange}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Select Valve State' }}
+                        >
+                            <MenuItem value="" disabled>Select Valve State</MenuItem>
+                            <MenuItem value="1">Normally Open</MenuItem>
+                            <MenuItem value="0">Normally Closed</MenuItem>
+                        </Select>
                     </Box>
 
                     <Button
