@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import { Container, Typography, Box, TextField, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Container, Typography, Box, TextField, Button, CircularProgress, Select, MenuItem } from '@mui/material';
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Select, MenuItem } from '@mui/material';
 import BackButton from '../components/BackButton';
 import dayjs from 'dayjs'; // Dayjs için import
 
 const TimerPage = () => {
-    const [selectedDate, setSelectedDate] = React.useState(null);
-    const [selectedTime, setSelectedTime] = React.useState(null);
-    const [selectedHours, setSelectedHours] = React.useState('');
-    const [selectedMinutes, setSelectedMinutes] = React.useState('');
-    const [selectedDuration, setSelectedDuration] = React.useState('');
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedTime, setSelectedTime] = useState(null);
+    const [selectedHours, setSelectedHours] = useState('');
+    const [selectedMinutes, setSelectedMinutes] = useState('');
+    const [selectedDuration, setSelectedDuration] = useState('');
+    const [loading, setLoading] = useState(true); // Loading state
 
     // Fetch state when the component mounts
     useEffect(() => {
@@ -30,6 +30,8 @@ const TimerPage = () => {
                 }
             } catch (error) {
                 console.error('Error fetching timer state:', error);
+            } finally {
+                setLoading(false); // Make sure to set loading to false after fetching
             }
         };
         fetchState();
@@ -84,6 +86,19 @@ const TimerPage = () => {
         }
     };
 
+    if (loading) {
+        return (
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh' 
+            }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Box sx={{ position: 'relative', height: '100vh', padding: 2 }}>
@@ -129,64 +144,64 @@ const TimerPage = () => {
                         color:'#84a7b8'
                     }}>Select Period</Typography>
                     <Box sx={{ marginBottom: 2 }}>
-                      <Select
-                        sx={{ 
-                          maxWidth: '300px',
-                          width: '100%',
-                        }}
-                        value={selectedHours}
-                        onChange={handleHoursChange}
-                        displayEmpty
-                        inputProps={{ 'aria-label': 'Select Hours' }}
-                      >
-                        <MenuItem value="" disabled>Select Hours</MenuItem>
-                        {[...Array(24).keys()].map(hour => (
-                          <MenuItem key={hour} value={hour}>{hour} hour{hour > 1 ? 's' : ''}</MenuItem>
-                        ))}
-                      </Select>
+                        <Select
+                            sx={{ 
+                                maxWidth: '300px',
+                                width: '100%',
+                            }}
+                            value={selectedHours}
+                            onChange={handleHoursChange}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Select Hours' }}
+                        >
+                            <MenuItem value="" disabled>Select Hours</MenuItem>
+                            {[...Array(24).keys()].map(hour => (
+                                <MenuItem key={hour} value={hour}>{hour} hour{hour > 1 ? 's' : ''}</MenuItem>
+                            ))}
+                        </Select>
                     </Box>
                     <Box sx={{ marginBottom: 2 }}>
-                      <Select
-                        sx={{ 
-                          maxWidth: '300px',
-                          width: '100%',
-                        }}
-                        value={selectedMinutes}
-                        onChange={handleMinutesChange}
-                        displayEmpty
-                        inputProps={{ 'aria-label': 'Select Minutes' }}
-                      >
-                        <MenuItem value="" disabled>Select Minutes</MenuItem>
-                        {[...Array(60).keys()].map(minute => (
-                          <MenuItem key={minute} value={minute}>{minute} minute{minute > 1 ? 's' : ''}</MenuItem>
-                        ))}
-                      </Select>
+                        <Select
+                            sx={{ 
+                                maxWidth: '300px',
+                                width: '100%',
+                            }}
+                            value={selectedMinutes}
+                            onChange={handleMinutesChange}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Select Minutes' }}
+                        >
+                            <MenuItem value="" disabled>Select Minutes</MenuItem>
+                            {[...Array(60).keys()].map(minute => (
+                                <MenuItem key={minute} value={minute}>{minute} minute{minute > 1 ? 's' : ''}</MenuItem>
+                            ))}
+                        </Select>
                     </Box>
                     <Typography variant="h6" sx={{
                         fontFamily: "'Nunito', sans-serif", 
                         color:'#84a7b8'
                     }}>Select Irrigation Duration</Typography>
                     <Box sx={{ marginBottom: 2 }}>
-                      <Select
-                        sx={{ 
-                          maxWidth: '300px',
-                          width: '100%',
-                        }}
-                        value={selectedDuration}
-                        onChange={handleDurationChange}
-                        displayEmpty
-                        inputProps={{ 'aria-label': 'Select Duration' }}
-                      >
-                        <MenuItem value="" disabled>Select Duration</MenuItem>
-                        {[...Array(24).keys()].map(i => {
-                          const minute = (i + 1) * 5;
-                          return (
-                            <MenuItem key={minute} value={minute}>
-                              {minute} minute{minute > 1 ? 's' : ''}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
+                        <Select
+                            sx={{ 
+                                maxWidth: '300px',
+                                width: '100%',
+                            }}
+                            value={selectedDuration}
+                            onChange={handleDurationChange}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Select Duration' }}
+                        >
+                            <MenuItem value="" disabled>Select Duration</MenuItem>
+                            {[...Array(24).keys()].map(i => {
+                                const minute = (i + 1) * 5;
+                                return (
+                                    <MenuItem key={minute} value={minute}>
+                                        {minute} minute{minute > 1 ? 's' : ''}
+                                    </MenuItem>
+                                );
+                            })}
+                        </Select>
                     </Box>
                     <Button
                         variant="contained"
@@ -212,4 +227,4 @@ const TimerPage = () => {
     );
 };
 
-export default TimerPage;
+export default TimerPage
