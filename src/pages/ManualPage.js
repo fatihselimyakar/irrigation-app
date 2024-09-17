@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Button, Select, MenuItem } from '@mui/material';
+import { Container, Typography, Box, Button, Select, MenuItem, CircularProgress } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import BackButton from '../components/BackButton';
@@ -55,7 +55,16 @@ const ManualPage = () => {
     };
 
     if (loading) {
-        return <Typography>Loading...</Typography>;
+        return (
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh' 
+            }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (
